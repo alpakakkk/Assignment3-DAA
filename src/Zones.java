@@ -3,7 +3,7 @@ import java.util.*;
 
 public class Zones {
 
-    // Mission 4: Kosaraju algorithm
+    // Mission 4: Kosaraju Algorithm
     public static int[] kosaraju(Input.Slides s) {
 
         int n = s.n();
@@ -27,7 +27,6 @@ public class Zones {
             }
 
             int top = 0;
-
             stack[top] = start;
             visited[start] = true;
 
@@ -56,7 +55,6 @@ public class Zones {
 
         // Second DFS pass: reversed graph
         int[] zone = new int[n];
-
         Arrays.fill(zone, -1);
 
         int zoneCount = 0;
@@ -96,12 +94,104 @@ public class Zones {
         return zone;
     }
 
-    // Mission 5 will be implemented later
+    // Mission 5: Fastest Route
     public static long[] routes(
         Input.Slides s,
         int[] zoneOf,
         int zoneCount
     ) {
-        return new long[]{0, 0};
+
+        // Cheapest slide between two zones
+        HashMap<Long, Integer> minEdge = new HashMap<>();
+
+        for (int i = 0; i < s.count(); i++) {
+
+            int a = zoneOf[s.from()[i]];
+            int b = zoneOf[s.to()[i]];
+
+            if (a == b) {
+                continue;
+            }
+
+            long key = ((long) a << 32)
+                | (b & 0xffffffffL);
+
+            minEdge.merge(
+                key,
+                s.time()[i],
+                Math::min
+            );
+        }
+
+        // Build graph of zones
+        @SuppressWarnings("unchecked")
+        ArrayList<long[]>[] outgoing =
+            new ArrayList[zoneCount];
+
+        for (int i = 0; i < zoneCount; i++) {
+            outgoing[i] = new ArrayList<>();
+        }
+
+        for (Map.Entry<Long, Integer> entry
+                : minEdge.entrySet()) {
+
+            long key = entry.getKey();
+
+            int a = (int) (key >>> 32);
+            int b = (int) key;
+
+            int cost = entry.getValue();
+
+            outgoing[a].add(new long[]{b, cost});
+        }
+
+        // Longest chain of zones
+        long[] longest = new long[zoneCount];
+        Arrays.fill(longest, 1);
+
+        // Shortest route
+        long INF = Long.MAX_VALUE / 4;
+
+        long[] shortest = new long[zoneCount];
+        Arrays.fill(shortest, INF);
+
+        int startZone = zoneOf[0];
+        int exitZone = zoneOf[s.n() - 1];
+
+        shortest[startZone] = 0;
+
+        // Process zones in topological order
+        for (int a = 0; a < zoneCount; a++) {
+
+            for (long[] edge : outgoing[a]) {
+
+                int b = (int) edge[0];
+                long cost = edge[1];
+
+                longest[b] = Math.max(
+                    longest[b],
+                    longest[a] + 1
+                );
+
+                if (shortest[a] != INF) {
+
+                    shortest[b] = Math.min(
+                        shortest[b],
+                        shortest[a] + cost
+                    );
+                }
+            }
+        }
+
+        long stages = 0;
+
+        for (long length : longest) {
+            stages = Math.max(stages, length);
+        }
+
+        return new long[]{
+            stages,
+            shortest[exitZone]
+        };
     }
 }
