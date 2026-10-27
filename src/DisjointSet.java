@@ -1,3 +1,8 @@
+/**
+ * Mission 0. Disjoint set union (DSU).
+ * Cells are numbered 0 .. n-1. Write the whole class here.
+ * Needed: union by size (the smaller tree goes under the larger one) and path compression in find.
+ */
 
 public class DisjointSet {
 
@@ -52,3 +57,4 @@ public class DisjointSet {
         return sets;
     }
 }
+
