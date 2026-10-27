@@ -1,9 +1,9 @@
 # Assignment 3. Maze Escape
 
-Student ID: 255087
-Name: Almanzor Kamzeyev
-Group: SE-2540
-Maze size (rows x columns): 9 X 12
+Student ID: 255087        
+Name: Almanzor Kamzeyev        
+Group: SE-2540       
+Maze size (rows x columns): 9 x 12
 
 This file is the report. Fill it in as you go. How to start: `START_HERE.md`. The task: `docs/Assignment3.pdf`.
 
